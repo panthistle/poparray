@@ -22,5 +22,4 @@ To install the add-on in Blender:
 The best way to find out what the add-on can do for you is to experiment with it. All the command buttons,  
 selection lists and input fields on the interface include tooltips of their function. If you are comfortable  
 using Blender, you should not have any problem with PopArray.  
-To get started, watch the [Introduction Video](https://www.youtube.com/watch?v=5YuJ9eQYwVE)  
-In addition, the [User Guide](https://panthistle.github.io/pdfs/PMUG25.pdf) has more information with illustrated examples.
+For more information, check out the [Introduction Video](https://www.youtube.com/watch?v=5YuJ9eQYwVE) and the [User Guide](https://panthistle.github.io/pdfs/PAUG34.pdf).
