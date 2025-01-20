@@ -30,7 +30,7 @@ bl_info = {
     "version": (3, 5, 0),
     "blender": (3, 6, 0),
     "location": "View3D > UI",
-    "doc_url": "https://panthistle.github.io/pdfs/PAUG35.pdf",
+    "doc_url": "https://github.com/panthistle/poparray",
     "category": "Object",
 }
 
