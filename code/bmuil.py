@@ -1024,11 +1024,6 @@ class PTDBLNPOPA_PT_ui_batchcoll_toggle(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         bcol = box.column()
         col = bcol.column(align=True)
         row = col.row(align=True)
-        row.operator("ptdblnpopa.batchcoll_toggle", text="Clear Temp Flags").action = (
-            "cleartemps"
-        )
-        col = bcol.column(align=True)
-        row = col.row(align=True)
         row.prop(b_ops, "path", toggle=True)
         prof_on = pool.use_profile
         if prof_on:
@@ -1038,7 +1033,6 @@ class PTDBLNPOPA_PT_ui_batchcoll_toggle(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         row = col.row(align=True)
         row.enabled = b_ops.path or b_ops.object or (prof_on and b_ops.prof)
         row.operator("ptdblnpopa.batchcoll_toggle", text="Disable").action = "disable"
-        row.operator("ptdblnpopa.batchcoll_toggle", text="Restore").action = "restore"
         row.operator("ptdblnpopa.batchcoll_toggle", text="Enable").action = "enable"
 
 
@@ -1070,8 +1064,7 @@ class PTDBLNPOPA_PT_ui_batchcoll_update(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         col = bcol.column(align=True)
         row = col.row(align=True)
         row.enabled = b_eds.path or b_eds.object or (prof_on and b_eds.prof)
-        row.operator("ptdblnpopa.batchcoll_update", text="Basic").doall = False
-        row.operator("ptdblnpopa.batchcoll_update", text="Match").doall = True
+        row.operator("ptdblnpopa.batchcoll_update")
 
 
 class PTDBLNPOPA_PT_ui_anicalc(PTDBLNPOPA_PT_ui, bpy.types.Panel):

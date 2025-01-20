@@ -322,7 +322,6 @@ class Helix:
         self.exp = dct["hel_exp"]
         self.mir = dct["hel_mir"]
         self.ease = dct["hel_ease"]
-        self.invert = dct["hel_invert"]
         self.closed = dct["closed"]
         self.ioff = dct["idx"]
 
@@ -342,8 +341,6 @@ class Helix:
         rad = (self.dim[0] / 2, self.dim[1] / 2)
         dif = (rad[0] * self.fac - rad[0], rad[1] * self.fac - rad[1])
         rls = it_list(self.ease, dt, self.exp, self.mir, npts)
-        if self.invert and not self.mir:
-            rls.reverse()
         dt *= 2 * math.pi * self.steps
         tls = [self.pha + dt * i for i in range(npts)]
         locs = [

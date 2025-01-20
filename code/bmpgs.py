@@ -119,11 +119,6 @@ class PTDBLNPOPA_anim_rots(bpy.types.PropertyGroup):
     )
 
 
-class PTDBLNPOPA_tmp_states(bpy.types.PropertyGroup):
-    on: bpy.props.BoolProperty(default=False)
-    off: bpy.props.BoolProperty(default=False)
-
-
 class PTDBLNPOPA_batchcoll_toggle(bpy.types.PropertyGroup):
     path: bpy.props.BoolProperty(
         name="path", description="toggle path edits", default=False, options={"HIDDEN"}
@@ -374,7 +369,6 @@ class PTDBLNPOPA_pathloc(bpy.types.PropertyGroup):
     abs_move: bpy.props.BoolProperty(default=False)
     bbatt: bpy.props.BoolProperty(default=True)
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_fac: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_amount)
 
@@ -401,7 +395,6 @@ class PTDBLNPOPA_pathrot(bpy.types.PropertyGroup):
     brots: bpy.props.StringProperty(default="both")
     pivot: bpy.props.FloatVectorProperty(size=3, default=(0, 0, 0))
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
 
     def anim_state(self):
@@ -428,7 +421,6 @@ class PTDBLNPOPA_profloc(bpy.types.PropertyGroup):
     bbatt: bpy.props.BoolProperty(default=True)
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_fac: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_amount)
@@ -458,7 +450,6 @@ class PTDBLNPOPA_profrot(bpy.types.PropertyGroup):
     pivot: bpy.props.FloatVectorProperty(size=3, default=(0, 0, 0))
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
 
     def anim_state(self):
@@ -636,9 +627,6 @@ class PTDBLNPOPA_pathed(bpy.types.PropertyGroup):
         name="width factor", description="grow / shrink", default=1
     )
     hel_pha: bpy.props.FloatProperty(name="phase", description="angle shift", default=0)
-    hel_invert: bpy.props.BoolProperty(
-        name="invert", description="inverted width factor", default=False
-    )
     hel_hlrp: bpy.props.BoolProperty(
         name="length", description="interpolate length", default=False
     )
@@ -1319,7 +1307,6 @@ class PTDBLNPOPA_obloc(bpy.types.PropertyGroup):
     abs_move: bpy.props.BoolProperty(default=False)
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_fac: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_amount)
@@ -1343,7 +1330,6 @@ class PTDBLNPOPA_obrot(bpy.types.PropertyGroup):
     angle: bpy.props.FloatProperty(default=0, subtype="ANGLE")
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
 
     def anim_state(self):
@@ -1363,7 +1349,6 @@ class PTDBLNPOPA_obsca(bpy.types.PropertyGroup):
     axis: bpy.props.FloatVectorProperty(size=3, default=(1, 1, 1))
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
-    tmp_state: bpy.props.PointerProperty(type=PTDBLNPOPA_tmp_states)
     ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_fac: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_amount)
@@ -2825,7 +2810,6 @@ classes = (
     PTDBLNPOPA_anim_mirror,
     PTDBLNPOPA_anim_amount,
     PTDBLNPOPA_anim_rots,
-    PTDBLNPOPA_tmp_states,
     PTDBLNPOPA_params,
     PTDBLNPOPA_pathed,
     PTDBLNPOPA_profed,
