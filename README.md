@@ -1,7 +1,7 @@
 ### About
 
-Object array generator/animator add-on for Blender. Developed and tested on Blender 3.6 LTS.  
-Latest update: 11-Nov-2024  
+Object array generator/animator add-on for Blender. Developed and tested on Blender 3.6 LTS and 4.2 LTS.  
+Latest update: 28-Jan-2025  
 
 
 ### Download and Install
@@ -13,7 +13,7 @@ To download the add-on:
 To install the add-on in Blender:
 - Start Blender and open the 'Preferences' window from the 'Edit' menu.  Select the 'Add-ons' tab.
 - If you have installed a previous version/update of PopArray, disable and remove it before installing this version.
-- Click 'Install...', find and select the downloaded 'PTDBLNPOPA.zip' file, then click 'Install Add-on'.
+- Click 'Installfrom Disk...', find and select the downloaded 'PTDBLNPOPA.zip' file, then click 'Install Add-on'.
 - Enable the add-on by ticking the checkbox next to its name.  
 
 
