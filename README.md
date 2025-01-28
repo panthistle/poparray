@@ -19,7 +19,6 @@ To install the add-on in Blender:
 
 ### Usage
 
-The best way to find out what the add-on can do for you is to experiment with it. All the command buttons,  
-selection lists and input fields on the interface include tooltips of their function. If you are comfortable  
-using Blender, you should not have any problem with PopArray.  
-For more information, watch the [Demo Video](https://www.youtube.com/watch?v=5YuJ9eQYwVE) 
+The best way to find out what the add-on can do for you is to experiment with it. There are several sample files to  
+get you started and tooltips if you hover your mouse over any of the command buttons in the user interface.  
+For an introduction, watch the [Demo Video](https://www.youtube.com/watch?v=5YuJ9eQYwVE) 
