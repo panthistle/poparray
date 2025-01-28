@@ -505,6 +505,7 @@ class PTDBLNPOPA_pathed(bpy.types.PropertyGroup):
 
     def pathed_polsidcoff_update(self, context):
         self.pol_cres = self.get("pol_cres", 0)
+        self.pol_xrs = self.get("pol_xrs", 2)
 
     def pathed_polcres_get(self):
         return self.get("pol_cres", 0)
@@ -514,10 +515,19 @@ class PTDBLNPOPA_pathed(bpy.types.PropertyGroup):
             self["pol_cres"] = 0
         else:
             npts = self.get("npts", 3)
-            sides = min(npts // 2, self.pol_sid)
+            sides = min(npts // 2, self.get("pol_sid", 3))
             xtra = npts - 2 * sides
             seg = (2 * sides + xtra - xtra % sides) // sides - 1
             self["pol_cres"] = min(max(0, value), seg)
+
+    def pathed_polxrs_get(self):
+        return self.get("pol_xrs", 2)
+
+    def pathed_polxrs_set(self, value):
+        npts = self.get("npts", 3)
+        sides = min(npts // 2, self.get("pol_sid", 3))
+        if sides == 4:
+            self["pol_xrs"] = min(max(2, value), (npts - 4) // 2)
 
     npts: bpy.props.IntProperty(default=12, update=pathed_npts_update)
     user_dim: bpy.props.FloatVectorProperty(size=3, default=(0, 0, 0))
@@ -596,6 +606,13 @@ class PTDBLNPOPA_pathed(bpy.types.PropertyGroup):
         default=0,
         get=pathed_polcres_get,
         set=pathed_polcres_set,
+    )
+    pol_xrs: bpy.props.IntProperty(
+        name="xres",
+        description="side resolution",
+        default=2,
+        get=pathed_polxrs_get,
+        set=pathed_polxrs_set,
     )
     pol_ang: bpy.props.FloatProperty(
         name="slope",
@@ -976,6 +993,7 @@ class PTDBLNPOPA_profed(bpy.types.PropertyGroup):
 
     def profed_polsidcoff_update(self, context):
         self.pol_cres = self.get("pol_cres", 0)
+        self.pol_xrs = self.get("pol_xrs", 2)
 
     def profed_polcres_get(self):
         return self.get("pol_cres", 0)
@@ -989,6 +1007,15 @@ class PTDBLNPOPA_profed(bpy.types.PropertyGroup):
             xtra = npts - 2 * sides
             seg = (2 * sides + xtra - xtra % sides) // sides - 1
             self["pol_cres"] = min(max(0, value), seg)
+
+    def profed_polxrs_get(self):
+        return self.get("pol_xrs", 2)
+
+    def profed_polxrs_set(self, value):
+        npts = self.get("npts", 3)
+        sides = min(npts // 2, self.get("pol_sid", 3))
+        if sides == 4:
+            self["pol_xrs"] = min(max(2, value), (npts - 4) // 2)
 
     npts: bpy.props.IntProperty(default=12, update=profed_npts_update)
     user_dim: bpy.props.FloatVectorProperty(size=2, default=(0, 0))
@@ -1067,6 +1094,13 @@ class PTDBLNPOPA_profed(bpy.types.PropertyGroup):
         default=0,
         get=profed_polcres_get,
         set=profed_polcres_set,
+    )
+    pol_xrs: bpy.props.IntProperty(
+        name="xres",
+        description="side resolution",
+        default=2,
+        get=profed_polxrs_get,
+        set=profed_polxrs_set,
     )
     pol_ang: bpy.props.FloatProperty(
         name="slope",
@@ -1573,7 +1607,7 @@ class PTDBLNPOPA_anicalc(bpy.types.PropertyGroup):
         description="calculation",
         items=(
             ("offsets", "offsets", "index offsets from items"),
-            ("loop", "loop", "loop from [items, offset, start, step]"),
+            ("loop", "loop", "loop from items and index offset"),
             ("cycles", "cycles", "mirror cycles from loop"),
             ("strip", "time scale", "strip time scale from control frame and function"),
         ),
@@ -1609,20 +1643,6 @@ class PTDBLNPOPA_anicalc(bpy.types.PropertyGroup):
         default=1,
         get=anicalc_offset_get,
         set=anicalc_offset_set,
-        options={"HIDDEN"},
-    )
-    start: bpy.props.IntProperty(
-        name="start",
-        description="start keyframe",
-        default=1,
-        min=1,
-        options={"HIDDEN"},
-    )
-    step: bpy.props.IntProperty(
-        name="step",
-        description="keyframe step",
-        default=1,
-        min=1,
         options={"HIDDEN"},
     )
     exp: bpy.props.EnumProperty(
@@ -1731,6 +1751,27 @@ class PTDBLNPOPA_pool(bpy.types.PropertyGroup):
         description=f"supported types: {OBJ_SUPPORT}",
         type=bpy.types.Object,
         poll=pool_sample_ob_check,
+        update=pool_source_update,
+    )
+    sample_pick_inst: bpy.props.BoolProperty(
+        name="pick instance",
+        default=False,
+        description="use separate objects from collection reference",
+        options={"HIDDEN"},
+        update=pool_source_update,
+    )
+    sample_rand_inst: bpy.props.BoolProperty(
+        name="pick random",
+        default=False,
+        description="select objects in random order",
+        options={"HIDDEN"},
+        update=pool_source_update,
+    )
+    sample_rand_seed: bpy.props.IntProperty(
+        name="seed",
+        description="random seed",
+        default=0,
+        min=0,
         update=pool_source_update,
     )
     setcoll: bpy.props.PointerProperty(type=bpy.types.Collection)
@@ -1876,6 +1917,9 @@ class PTDBLNPOPA_pool(bpy.types.PropertyGroup):
             "replace_set",
             "custom_path_use_edits",
             "anicalc",
+            "sample_pick_inst",
+            "sample_rand_inst",
+            "sample_rand_seed",
         }
         for key in self.__annotations__.keys():
             if key in exclude:

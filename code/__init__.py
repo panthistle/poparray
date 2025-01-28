@@ -22,17 +22,18 @@
 #
 # ---------------------------- ADDON INFO --------------------------------------
 
+#################  FOR USE WITH BLENDER VERSION 3.6  #########################
 
-bl_info = {
-    "name": "PTDBLNPOPA",
-    "description": "path-on-path array",
-    "author": "Pan Thistle",
-    "version": (3, 5, 0),
-    "blender": (3, 6, 0),
-    "location": "View3D > UI",
-    "doc_url": "https://github.com/panthistle/poparray",
-    "category": "Object",
-}
+#bl_info = {
+#    "name": "PTDBLNPOPA",
+#    "description": "path-on-path object array generator",
+#    "author": "Pan Thistle",
+#    "version": (3, 5, 0),
+#    "blender": (3, 6, 0),
+#    "location": "View3D > UI",
+#    "doc_url": "https://github.com/panthistle/poparray",
+#    "category": "Object",
+#}
 
 
 # ------------------------------------------------------------------------------

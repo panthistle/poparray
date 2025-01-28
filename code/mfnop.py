@@ -100,6 +100,9 @@ file_excluded_attributes = {
     "batchtoggle_ops",
     "batchupdate_ops",
     "anicalc",
+    "sample_pick_inst",
+    "sample_rand_inst",
+    "sample_rand_seed",
 }
 
 

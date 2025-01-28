@@ -117,6 +117,15 @@ def basels_ok(scene, pool):
     return True
 
 
+def collection_instance_empty(scene, pool):
+    if not basels_ok(scene, pool):
+        return False
+    src = pool.sample_ob
+    if src.type == "EMPTY" and src.instance_type == "COLLECTION":
+        return True
+    return False
+
+
 def arrayset_ok(scene):
     pool = scene.ptdblnpopa_pool
     if not basels_ok(scene, pool):
@@ -279,12 +288,24 @@ class PTDBLNPOPA_PT_ui_setup(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         pool = scene.ptdblnpopa_pool
         pans_ok = ed_panels_ok(pool)
         base_ok = basels_ok(scene, pool)
+        inst_ok = collection_instance_empty(scene, pool)
         layout = self.layout
         box = layout.box()
         bcol = box.column()
         col = bcol.column(align=True)
         row = col.row(align=True)
         row.prop(pool, "sample_ob", text="")
+        col = bcol.column(align=True)
+        row = col.row(align=True)
+        rc = row.column(align=True)
+        rc.enabled = inst_ok
+        rc.prop(pool, "sample_pick_inst", text="instance", toggle=True)
+        rc = row.column(align=True)
+        rc.enabled = inst_ok and pool.sample_pick_inst
+        rc.prop(pool, "sample_rand_inst", text="random", toggle=True)
+        rc = row.column(align=True)
+        rc.enabled = inst_ok and pool.sample_pick_inst and pool.sample_rand_inst
+        rc.prop(pool, "sample_rand_seed", text="")
         col = bcol.column(align=True)
         row = col.row(align=True)
         rc = row.column(align=True)
@@ -1083,7 +1104,7 @@ class PTDBLNPOPA_PT_ui_anicalc(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         c.operator("ptdblnpopa.anicalc", text="Calculate").current = False
         caller = clc.calc_type
         c = row.column(align=True)
-        c.enabled = caller != "offsets"
+        c.enabled = caller not in {"offsets", "loop"}
         c.operator("ptdblnpopa.anicalc", text="Current").current = True
         row = bcol.row(align=True)
         row.prop(clc, "calc_type", text="")
@@ -1093,9 +1114,6 @@ class PTDBLNPOPA_PT_ui_anicalc(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         if caller == "loop":
             row.prop(clc, "items", text="")
             row.prop(clc, "offset", text="")
-            row = col.row(align=True)
-            row.prop(clc, "start", text="")
-            row.prop(clc, "step", text="")
         elif caller == "offsets":
             row.prop(clc, "items", text="")
         elif caller == "cycles":

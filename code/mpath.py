@@ -72,6 +72,22 @@ def it_list(ease, dt, p, m, count):
 # --------------------- PATH/PROFILE LOCATION PROVIDERS ------------------------
 
 
+def bevlocs(p1, p2, pc, nsegs):
+    mt = Matrix.Translation(pc)
+    p1, p2 = (mt.inverted() @ v for v in (p1, p2))
+    ang = p1.to_2d().angle_signed(Vector((1, 0)), 0)
+    mr = Matrix.Rotation(ang, 4, "Z")
+    p1, p2 = (mr.inverted() @ v for v in (p1, p2))
+    msh = Matrix.Shear("XZ", 4, (p2[0] / p2[1], 0))
+    p2 = msh.inverted() @ p2
+    mdg = Matrix.Diagonal((p1[0], p2[1], 1, 1))
+    bpts = nsegs + 1
+    dt = 0.5 * math.pi / nsegs
+    bvs = [Vector((math.cos(dt * i), math.sin(dt * i), 0)) for i in range(bpts)]
+    mat = mt @ mr @ msh @ mdg
+    return [mat @ v for v in bvs]
+
+
 class Line:
     """straight line (X, from x=dim/2): path, profile"""
 
@@ -227,7 +243,13 @@ class Polygon:
         t_res = 2 * t_sides + t_pts - t_rem
         t_seg = t_res // t_sides
         self._sides = t_sides
-        self._segs = [t_seg + 1 if i < t_rem else t_seg for i in range(t_sides)]
+        if t_sides == 4:
+            x_res = min(max(2, dct["pol_xrs"]), (self.npts - 4) // 2)
+            y_res = (self.npts - 2 * x_res) // 2
+            xs = self.npts - (2 * x_res + 2 * y_res)
+            self._segs = [x_res + xs, y_res, x_res, y_res]
+        else:
+            self._segs = [t_seg + 1 if i < t_rem else t_seg for i in range(t_sides)]
         self._coff = 0 if dct["pol_coff"] < 0.001 else dct["pol_coff"]
         self._cres = 0 if not self._coff else min(dct["pol_cres"], t_seg - 1)
         self.angle = dct["pol_ang"]
@@ -272,7 +294,7 @@ class Polygon:
                 uac = ac.normalized()
                 p2 = a + uac * coff
                 pc = p1 + uac * coff
-                locs += self._bevlocs(p1, p2, pc, cres)
+                locs += bevlocs(p1, p2, pc, cres)
                 seg = self._segs[i] - cres
                 if seg > 1:
                     b = locs.pop()
@@ -287,21 +309,6 @@ class Polygon:
         if self.ioff:
             return locs[self.ioff :] + locs[: self.ioff]
         return locs
-
-    def _bevlocs(self, p1, p2, pc, nsegs):
-        mt = Matrix.Translation(pc)
-        p1, p2 = (mt.inverted() @ v for v in (p1, p2))
-        ang = p1.to_2d().angle_signed(Vector((1, 0)), 0)
-        mr = Matrix.Rotation(ang, 4, "Z")
-        p1, p2 = (mr.inverted() @ v for v in (p1, p2))
-        msh = Matrix.Shear("XZ", 4, (p2[0] / p2[1], 0))
-        p2 = msh.inverted() @ p2
-        mdg = Matrix.Diagonal((p1[0], p2[1], 1, 1))
-        bpts = nsegs + 1
-        dt = 0.5 * math.pi / nsegs
-        bvs = [Vector((math.cos(dt * i), math.sin(dt * i), 0)) for i in range(bpts)]
-        mat = mt @ mr @ msh @ mdg
-        return [mat @ v for v in bvs]
 
 
 class Helix:

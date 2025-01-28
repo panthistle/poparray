@@ -51,6 +51,39 @@ def create_oblist(src, items, coll):
     return coll.objects[:]
 
 
+def create_oblist_instances(name, items, coll, ic_obs, rand_inst, rand_seed):
+    nobs = len(ic_obs)
+    if rand_inst:
+        seed(rand_seed)
+        for i in range(items):
+            j = randint(0, nobs - 1)
+            ob = ic_obs[j].copy()
+            ob.name = name
+            ob.rotation_mode = "QUATERNION"
+            ob.hide_viewport = False
+            ob.hide_render = False
+            ob.hide_select = False
+            ob.hide_set(False)
+            coll.objects.link(ob)
+            ob.select_set(False)
+        return coll.objects[:]
+    j = 0
+    for i in range(items):
+        if j == nobs:
+            j = 0
+        ob = ic_obs[j].copy()
+        j += 1
+        ob.name = name
+        ob.rotation_mode = "QUATERNION"
+        ob.hide_viewport = False
+        ob.hide_render = False
+        ob.hide_select = False
+        ob.hide_set(False)
+        coll.objects.link(ob)
+        ob.select_set(False)
+    return coll.objects[:]
+
+
 # ------------------------------------------------------------------------------
 #
 # ------------------------- SCENE UPDATES --------------------------------------
@@ -229,7 +262,21 @@ def scene_update_newset(scene, replace=False, rename_coll=False):
         name = pool.setcoll_name
     pool.setcoll = bpy.data.collections.new(name)
     scene.collection.children.link(pool.setcoll)
-    oblst = create_oblist(pool.sample_ob, nobs, pool.setcoll)
+    if (
+        pool.sample_ob.type == "EMPTY"
+        and pool.sample_ob.instance_type == "COLLECTION"
+        and pool.sample_pick_inst
+    ):
+        oblst = create_oblist_instances(
+            f"{pool.sample_ob.name}_copy",
+            nobs,
+            pool.setcoll,
+            list(pool.sample_ob.instance_collection.objects),
+            pool.sample_rand_inst,
+            pool.sample_rand_seed,
+        )
+    else:
+        oblst = create_oblist(pool.sample_ob, nobs, pool.setcoll)
     array_update(pool, pop, oblst, popitems, sindz_on)
 
 
