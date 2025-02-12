@@ -48,6 +48,7 @@
       "pol_sid": 3,
       "pol_coff": 0.0,
       "pol_cres": 0,
+      "pol_xrs": 2,
       "pol_ang": 0.0,
       "pol_ease": "IN-OUT",
       "pol_exp": 1.0,
@@ -59,7 +60,6 @@
       "hel_stp": 2.0,
       "hel_fac": 1.0,
       "hel_pha": 0.0,
-      "hel_invert": false,
       "hel_hlrp": false,
       "hel_exp": 2.0,
       "hel_mir": false,
@@ -80,8 +80,11 @@
       "offrnd": false,
       "offrndseed": 0,
       "offset": 0,
-      "beg": 1,
-      "stp": 1
+      "keyframes": {
+        "beg": 1,
+        "end": 1,
+        "stp": 1
+      }
     },
     "ani_dim": false,
     "ani_dim_mirror": {
@@ -184,6 +187,7 @@
       "pol_sid": 3,
       "pol_coff": 0.0,
       "pol_cres": 0,
+      "pol_xrs": 2,
       "pol_ang": 0.0,
       "pol_ease": "IN-OUT",
       "pol_exp": 1.0,
@@ -194,9 +198,12 @@
       "active": false,
       "offrnd": false,
       "offrndseed": 0,
-      "offset": 1,
-      "beg": 1,
-      "stp": 1
+      "offset": 0,
+      "keyframes": {
+        "beg": 1,
+        "end": 1,
+        "stp": 1
+      }
     },
     "ani_dim": false,
     "ani_dim_mirror": {
@@ -248,6 +255,7 @@
     ],
     "nseed": 0,
     "ani_noiz": false,
+    "ani_fac": 0.10000000149011612,
     "ani_seed": false,
     "ani_blin": 1,
     "ani_blout": 1,
@@ -325,16 +333,22 @@
         "offrnd": true,
         "offrndseed": 5,
         "offset": 20,
-        "beg": 1,
-        "stp": 3
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 3
+        }
       },
       "ani_idx": {
         "active": true,
         "offrnd": true,
         "offrndseed": 0,
         "offset": 20,
-        "beg": 1,
-        "stp": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       },
       "ani_fac": {
         "active": true,
@@ -342,6 +356,12 @@
         "mirror": {
           "active": true,
           "cycles": 5
+        },
+        "delta_change": false,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
         }
       }
     },
@@ -399,16 +419,22 @@
         "offrnd": true,
         "offrndseed": 3,
         "offset": 20,
-        "beg": 1,
-        "stp": 2
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 2
+        }
       },
       "ani_idx": {
         "active": true,
         "offrnd": true,
         "offrndseed": 7,
         "offset": 20,
-        "beg": 1,
-        "stp": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       },
       "ani_fac": {
         "active": true,
@@ -416,6 +442,12 @@
         "mirror": {
           "active": true,
           "cycles": 2
+        },
+        "delta_change": false,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
         }
       }
     },
@@ -473,16 +505,22 @@
         "offrnd": true,
         "offrndseed": 1,
         "offset": 20,
-        "beg": 1,
-        "stp": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       },
       "ani_idx": {
         "active": true,
         "offrnd": true,
         "offrndseed": 2,
         "offset": 20,
-        "beg": 1,
-        "stp": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       },
       "ani_fac": {
         "active": true,
@@ -490,6 +528,12 @@
         "mirror": {
           "active": true,
           "cycles": 2
+        },
+        "delta_change": false,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
         }
       }
     }

@@ -48,6 +48,7 @@
       "pol_sid": 3,
       "pol_coff": 0.0,
       "pol_cres": 0,
+      "pol_xrs": 2,
       "pol_ang": 0.0,
       "pol_ease": "LINEAR",
       "pol_exp": 1.0,
@@ -59,7 +60,6 @@
       "hel_stp": 2.0,
       "hel_fac": 1.0,
       "hel_pha": 0.0,
-      "hel_invert": false,
       "hel_hlrp": false,
       "hel_exp": 2.0,
       "hel_mir": false,
@@ -80,8 +80,11 @@
       "offrnd": false,
       "offrndseed": 0,
       "offset": 0,
-      "beg": 1,
-      "stp": 1
+      "keyframes": {
+        "beg": 1,
+        "end": 1,
+        "stp": 1
+      }
     },
     "ani_dim": false,
     "ani_dim_mirror": {
@@ -135,7 +138,7 @@
     "ani_tor_pha": 0.0
   },
   "path_att": {
-    "active": true,
+    "active": false,
     "track": "Z",
     "upfixed": true,
     "up": "X"
@@ -184,6 +187,7 @@
       "pol_sid": 3,
       "pol_coff": 0.0,
       "pol_cres": 0,
+      "pol_xrs": 2,
       "pol_ang": 0.0,
       "pol_ease": "LINEAR",
       "pol_exp": 1.0,
@@ -195,8 +199,11 @@
       "offrnd": false,
       "offrndseed": 0,
       "offset": 0,
-      "beg": 1,
-      "stp": 1
+      "keyframes": {
+        "beg": 1,
+        "end": 1,
+        "stp": 1
+      }
     },
     "ani_dim": false,
     "ani_dim_mirror": {
@@ -248,6 +255,7 @@
     ],
     "nseed": 0,
     "ani_noiz": false,
+    "ani_fac": 0.10000000149011612,
     "ani_seed": false,
     "ani_blin": 1,
     "ani_blout": 1,
@@ -270,7 +278,7 @@
   "pathrot": [
     {
       "name": "Rotation",
-      "active": false,
+      "active": true,
       "axis": [
         0.0,
         1.0,
@@ -304,11 +312,25 @@
         "rndshuff": false
       },
       "ani_rot": {
-        "active": false,
+        "ani_ang": false,
         "lerp": false,
         "angle": 0.0,
-        "beg": 1,
-        "end": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
+      },
+      "ani_nidx": {
+        "active": false,
+        "offrnd": false,
+        "offrndseed": 0,
+        "offset": 0,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       }
     },
     {
@@ -347,11 +369,25 @@
         "rndshuff": false
       },
       "ani_rot": {
-        "active": false,
+        "ani_ang": false,
         "lerp": false,
         "angle": 0.0,
-        "beg": 1,
-        "end": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
+      },
+      "ani_nidx": {
+        "active": false,
+        "offrnd": false,
+        "offrndseed": 0,
+        "offset": 0,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       }
     },
     {
@@ -363,7 +399,7 @@
         1.0
       ],
       "angle": 1.5707963705062866,
-      "bbatt": "after",
+      "bbatt": "before",
       "brots": "both",
       "pivot": [
         0.0,
@@ -390,11 +426,25 @@
         "rndshuff": false
       },
       "ani_rot": {
-        "active": false,
+        "ani_ang": false,
         "lerp": false,
         "angle": 0.0,
-        "beg": 1,
-        "end": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
+      },
+      "ani_nidx": {
+        "active": false,
+        "offrnd": false,
+        "offrndseed": 0,
+        "offset": 0,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       }
     }
   ],
@@ -455,11 +505,36 @@
         "rndshuff": false
       },
       "ani_rot": {
-        "active": false,
+        "ani_ang": false,
         "lerp": false,
         "angle": 0.0,
-        "beg": 1,
-        "end": 1
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
+      },
+      "ani_nidx": {
+        "active": false,
+        "offrnd": false,
+        "offrndseed": 0,
+        "offset": 0,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
+      },
+      "ani_idx": {
+        "active": false,
+        "offrnd": false,
+        "offrndseed": 0,
+        "offset": 0,
+        "keyframes": {
+          "beg": 1,
+          "end": 1,
+          "stp": 1
+        }
       }
     }
   ],

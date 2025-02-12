@@ -1,16 +1,16 @@
 {
   "path": {
-    "provider": "line",
+    "provider": "polygon",
     "res_lin": 12,
     "res_wav": 12,
     "res_arc": 12,
-    "res_ell": 12,
-    "res_pol": 12,
+    "res_ell": 11,
+    "res_pol": 60,
     "res_hel": 24,
     "res_spi": 24,
     "res_tor": 36,
     "pathed": {
-      "npts": 12,
+      "npts": 60,
       "user_dim": [
         0.0,
         0.0,
@@ -27,9 +27,9 @@
         8.0,
         8.0
       ],
-      "lin_dim": 4.0,
+      "lin_dim": 8.0,
       "lin_ease": "LINEAR",
-      "lin_exp": 1.0,
+      "lin_exp": 2.0,
       "wav_dim": 8.0,
       "wav_amp": 0.5,
       "wav_frq": 1.0,
@@ -42,14 +42,14 @@
         8.0
       ],
       "pol_dim": [
-        8.0,
-        8.0
+        41.08000183105469,
+        16.68000030517578
       ],
-      "pol_sid": 3,
-      "pol_coff": 0.0,
-      "pol_cres": 0,
-      "pol_xrs": 2,
-      "pol_ang": 0.0,
+      "pol_sid": 4,
+      "pol_coff": 2.5,
+      "pol_cres": 3,
+      "pol_xrs": 22,
+      "pol_ang": 0.7853981852531433,
       "pol_ease": "LINEAR",
       "pol_exp": 1.0,
       "hel_dim": [
@@ -58,7 +58,7 @@
       ],
       "hel_len": 8.0,
       "hel_stp": 2.0,
-      "hel_fac": 1.0,
+      "hel_fac": 0.7599999904632568,
       "hel_pha": 0.0,
       "hel_hlrp": false,
       "hel_exp": 2.0,
@@ -73,13 +73,13 @@
       "tor_stp": 4.0,
       "tor_pha": 0.0,
       "idx": 0,
-      "closed": false
+      "closed": true
     },
     "ani_nidx": {
-      "active": false,
+      "active": true,
       "offrnd": false,
       "offrndseed": 0,
-      "offset": 0,
+      "offset": 1,
       "keyframes": {
         "beg": 1,
         "end": 1,
@@ -124,11 +124,11 @@
       "active": false,
       "cycles": 1
     },
-    "ani_lin_exp": 1.0,
+    "ani_lin_exp": 2.0,
     "ani_wav_amp": 0.5,
     "ani_wav_frq": 1.0,
     "ani_wav_pha": 0.0,
-    "ani_arc_fac": 2.0,
+    "ani_arc_fac": 4.0,
     "ani_hel_len": 8.0,
     "ani_hel_fac": 1.0,
     "ani_hel_stp": 2.0,
@@ -138,10 +138,10 @@
     "ani_tor_pha": 0.0
   },
   "path_att": {
-    "active": false,
+    "active": true,
     "track": "Y",
     "upfixed": false,
-    "up": "X"
+    "up": "Z"
   },
   "prof": {
     "provider": "line",
@@ -166,9 +166,9 @@
         2.0,
         2.0
       ],
-      "lin_dim": 4.0,
+      "lin_dim": 2.0,
       "lin_ease": "LINEAR",
-      "lin_exp": 1.0,
+      "lin_exp": 2.0,
       "wav_dim": 2.0,
       "wav_amp": 0.5,
       "wav_frq": 1.0,
@@ -190,7 +190,7 @@
       "pol_xrs": 2,
       "pol_ang": 0.0,
       "pol_ease": "LINEAR",
-      "pol_exp": 1.0,
+      "pol_exp": 2.0,
       "idx": 0,
       "closed": false
     },
@@ -232,28 +232,28 @@
       "active": false,
       "cycles": 1
     },
-    "ani_lin_exp": 1.0,
+    "ani_lin_exp": 2.0,
     "ani_wav_amp": 0.5,
     "ani_wav_frq": 1.0,
     "ani_wav_pha": 0.0,
     "ani_arc_fac": 1.0
   },
   "prof_att": {
-    "active": false,
-    "track": "X",
+    "active": true,
+    "track": "Y",
     "upfixed": false,
-    "up": "Y"
+    "up": "Z"
   },
   "full_att": false,
   "noiz": {
-    "active": false,
-    "ampli": 0.0,
+    "active": true,
+    "ampli": 0.029999999329447746,
     "vfac": [
       0.0,
-      0.0,
+      1.0,
       0.0
     ],
-    "nseed": 0,
+    "nseed": 5,
     "ani_noiz": false,
     "ani_fac": 0.10000000149011612,
     "ani_seed": false,
@@ -276,34 +276,28 @@
     "nseed": 0
   },
   "pathrot": [],
-  "pathloc": [],
-  "profrot": [
+  "pathloc": [
     {
-      "name": "Rots",
+      "name": "Location",
       "active": true,
+      "fac": -0.4000000059604645,
       "axis": [
         0.0,
-        0.0,
-        1.0
-      ],
-      "angle": 1.5707963705062866,
-      "bbatt": "after",
-      "brots": "both",
-      "pivot": [
-        0.0,
-        0.0,
+        1.0,
         0.0
       ],
+      "abs_move": false,
+      "bbatt": true,
       "nprams": {
-        "npts": 12,
-        "ease": "OFF",
-        "exp": 1.0,
+        "npts": 60,
+        "ease": "IN-OUT",
+        "exp": 2.0,
         "cyc": false,
-        "mir": false,
+        "mir": true,
         "rev": false,
         "reflect": "0",
-        "idx": 0,
-        "itm": 12,
+        "idx": 14,
+        "itm": 7,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -312,52 +306,26 @@
         "rndval": 1.0,
         "rndseed": 0,
         "rndshuff": false
-      },
-      "iprams": {
-        "npts": 12,
-        "ease": "OFF",
-        "exp": 1.0,
-        "cyc": false,
-        "mir": false,
-        "rev": false,
-        "reflect": "0",
-        "idx": 0,
-        "itm": 12,
-        "gap": 0,
-        "reps": 1,
-        "repfstp": 1,
-        "repfoff": 1.0,
-        "rnduse": false,
-        "rndval": 1.0,
-        "rndseed": 0,
-        "rndshuff": false
-      },
-      "ani_rot": {
-        "ani_ang": false,
-        "lerp": false,
-        "angle": 0.0,
-        "keyframes": {
-          "beg": 1,
-          "end": 1,
-          "stp": 1
-        }
       },
       "ani_nidx": {
-        "active": false,
+        "active": true,
         "offrnd": false,
         "offrndseed": 0,
-        "offset": 0,
+        "offset": -1,
         "keyframes": {
           "beg": 1,
           "end": 1,
           "stp": 1
         }
       },
-      "ani_idx": {
+      "ani_fac": {
         "active": false,
-        "offrnd": false,
-        "offrndseed": 0,
-        "offset": 0,
+        "fac": 0.0,
+        "mirror": {
+          "active": false,
+          "cycles": 1
+        },
+        "delta_change": false,
         "keyframes": {
           "beg": 1,
           "end": 1,
@@ -366,27 +334,28 @@
       }
     }
   ],
+  "profrot": [],
   "profloc": [],
   "obrot": [
     {
-      "name": "Rots",
+      "name": "Rotation",
       "active": true,
       "axis": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "angle": 1.5707963705062866,
       "nprams": {
-        "npts": 12,
+        "npts": 60,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
         "idx": 0,
-        "itm": 12,
+        "itm": 60,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -399,13 +368,13 @@
       "iprams": {
         "npts": 12,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
         "idx": 0,
-        "itm": 12,
+        "itm": 1,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -451,29 +420,29 @@
   ],
   "obloc": [
     {
-      "name": "Locs",
+      "name": "Location",
       "active": true,
-      "fac": 2.2799999713897705,
+      "fac": 0.25,
       "axis": [
         0.0,
-        -0.10000000149011612,
+        0.0,
         1.0
       ],
       "abs_move": false,
       "nprams": {
-        "npts": 12,
+        "npts": 60,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
         "idx": 0,
-        "itm": 5,
+        "itm": 1,
         "gap": 0,
-        "reps": 1,
+        "reps": 60,
         "repfstp": 1,
-        "repfoff": 1.0,
+        "repfoff": -1.0,
         "rnduse": false,
         "rndval": 1.0,
         "rndseed": 0,
@@ -482,13 +451,13 @@
       "iprams": {
         "npts": 12,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
         "idx": 0,
-        "itm": 4,
+        "itm": 1,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -510,10 +479,10 @@
         }
       },
       "ani_idx": {
-        "active": true,
+        "active": false,
         "offrnd": false,
         "offrndseed": 0,
-        "offset": 1,
+        "offset": 0,
         "keyframes": {
           "beg": 1,
           "end": 1,
@@ -521,11 +490,11 @@
         }
       },
       "ani_fac": {
-        "active": false,
-        "fac": 0.0,
+        "active": true,
+        "fac": -0.25,
         "mirror": {
-          "active": false,
-          "cycles": 1
+          "active": true,
+          "cycles": 10
         },
         "delta_change": false,
         "keyframes": {
@@ -534,27 +503,28 @@
           "stp": 1
         }
       }
-    },
+    }
+  ],
+  "obsca": [
     {
-      "name": "Locs",
+      "name": "Scale",
       "active": true,
-      "fac": -1.8600000143051147,
+      "fac": -0.5,
       "axis": [
+        -0.10000000149011612,
         1.0,
-        0.10000000149011612,
         0.0
       ],
-      "abs_move": false,
       "nprams": {
-        "npts": 12,
+        "npts": 60,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
         "idx": 0,
-        "itm": 5,
+        "itm": 60,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -567,13 +537,13 @@
       "iprams": {
         "npts": 12,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
-        "idx": 8,
-        "itm": 4,
+        "idx": 0,
+        "itm": 1,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -584,10 +554,10 @@
         "rndshuff": false
       },
       "ani_nidx": {
-        "active": true,
+        "active": false,
         "offrnd": false,
         "offrndseed": 0,
-        "offset": 1,
+        "offset": 0,
         "keyframes": {
           "beg": 1,
           "end": 1,
@@ -621,25 +591,24 @@
       }
     },
     {
-      "name": "Locs",
+      "name": "Scale",
       "active": true,
-      "fac": 1.4700000286102295,
+      "fac": 12.0,
       "axis": [
         0.0,
-        -0.10000000149011612,
-        -1.0
+        0.0,
+        1.0
       ],
-      "abs_move": false,
       "nprams": {
-        "npts": 12,
+        "npts": 60,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
-        "idx": 7,
-        "itm": 5,
+        "idx": 0,
+        "itm": 60,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -652,13 +621,13 @@
       "iprams": {
         "npts": 12,
         "ease": "OFF",
-        "exp": 1.0,
+        "exp": 2.0,
         "cyc": false,
         "mir": false,
         "rev": false,
         "reflect": "0",
-        "idx": 8,
-        "itm": 4,
+        "idx": 0,
+        "itm": 1,
         "gap": 0,
         "reps": 1,
         "repfstp": 1,
@@ -673,91 +642,6 @@
         "offrnd": false,
         "offrndseed": 0,
         "offset": 0,
-        "keyframes": {
-          "beg": 1,
-          "end": 1,
-          "stp": 1
-        }
-      },
-      "ani_idx": {
-        "active": true,
-        "offrnd": false,
-        "offrndseed": 0,
-        "offset": 1,
-        "keyframes": {
-          "beg": 1,
-          "end": 1,
-          "stp": 1
-        }
-      },
-      "ani_fac": {
-        "active": false,
-        "fac": 0.0,
-        "mirror": {
-          "active": false,
-          "cycles": 1
-        },
-        "delta_change": false,
-        "keyframes": {
-          "beg": 1,
-          "end": 1,
-          "stp": 1
-        }
-      }
-    },
-    {
-      "name": "Locs",
-      "active": true,
-      "fac": 1.5,
-      "axis": [
-        1.0,
-        -0.10000000149011612,
-        0.0
-      ],
-      "abs_move": false,
-      "nprams": {
-        "npts": 12,
-        "ease": "OFF",
-        "exp": 1.0,
-        "cyc": false,
-        "mir": false,
-        "rev": false,
-        "reflect": "0",
-        "idx": 7,
-        "itm": 5,
-        "gap": 0,
-        "reps": 1,
-        "repfstp": 1,
-        "repfoff": 1.0,
-        "rnduse": false,
-        "rndval": 1.0,
-        "rndseed": 0,
-        "rndshuff": false
-      },
-      "iprams": {
-        "npts": 12,
-        "ease": "OFF",
-        "exp": 1.0,
-        "cyc": false,
-        "mir": false,
-        "rev": false,
-        "reflect": "0",
-        "idx": 0,
-        "itm": 4,
-        "gap": 0,
-        "reps": 1,
-        "repfstp": 1,
-        "repfoff": 1.0,
-        "rnduse": false,
-        "rndval": 1.0,
-        "rndseed": 0,
-        "rndshuff": false
-      },
-      "ani_nidx": {
-        "active": true,
-        "offrnd": false,
-        "offrndseed": 0,
-        "offset": 1,
         "keyframes": {
           "beg": 1,
           "end": 1,
@@ -791,15 +675,14 @@
       }
     }
   ],
-  "obsca": [],
-  "use_profile": true,
-  "setcoll_name": "grid_anim_1",
+  "use_profile": false,
+  "setcoll_name": "travelator",
   "ani_kf_type": "1",
   "ani_kf_start": 1,
   "ani_kf_step": 10,
-  "ani_kf_loop": 13,
+  "ani_kf_loop": 61,
   "act_loc": true,
   "act_rot": true,
   "act_sca": false,
-  "shqu": false
+  "shqu": true
 }
