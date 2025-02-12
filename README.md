@@ -1,7 +1,7 @@
-### About
+### PopArray v3.5
 
 Object array generator/animator add-on for Blender. Developed and tested on Blender 3.6 LTS and 4.2 LTS.  
-Latest update: 28-Jan-2025  
+Latest update: 12-Feb-2025  
 
 
 ### Download and Install
@@ -19,6 +19,7 @@ To install the add-on in Blender:
 
 ### Usage
 
-The best way to find out what the add-on can do for you is to experiment with it. There are several sample files to  
-get you started and tooltips if you hover your mouse over any of the command buttons in the user interface.  
-For an introduction, watch the [Demo Video](https://www.youtube.com/watch?v=5YuJ9eQYwVE) 
+The best way to find out what the add-on does is to experiment with it. There are several sample files inside the  
+'sample_settings' directory which you can download and open in Blender once you have installed PopArray. These are  
+examples to help get you started. You can also create your own sample files to save favourite settings for later use.  
+In addition, there are descriptive tooltips for all the command buttons in the user interface.  
