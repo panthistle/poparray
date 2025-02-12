@@ -211,20 +211,17 @@ def coll_ops_tmpl(bcol, pool, cname, iname, coll_ob, coll_idx, ops_on):
 
 
 def anim_rot_tmpl(c, ob):
-    anirot = ob.ani_rot
     row = c.row(align=True)
     col = row.column(align=True)
-    col.prop(anirot, "active", toggle=True)
+    col.prop(ob, "ani_ang", toggle=True)
     col = row.column(align=True)
-    col.enabled = anirot.active
-    col.prop(anirot, "angle", text="")
+    col.enabled = ob.ani_ang
+    col.prop(ob, "angle", text="")
     row = c.row(align=True)
-    row.enabled = anirot.active
-    row.prop(anirot, "beg", text="")
-    row.prop(anirot, "end", text="")
-    row = c.row(align=True)
-    row.enabled = anirot.active
-    row.prop(anirot, "lerp", text="factors", toggle=True)
+    row.enabled = ob.ani_ang
+    row.prop(ob.keyframes, "beg", text="")
+    row.prop(ob.keyframes, "end", text="")
+    row.prop(ob.keyframes, "stp", text="")
 
 
 def anim_ind_tmpl(c, ob, cap):
@@ -243,8 +240,9 @@ def anim_ind_tmpl(c, ob, cap):
     col.prop(ob, "offrndseed", text="")
     row = c.row(align=True)
     row.enabled = ob.active
-    row.prop(ob, "beg", text="")
-    row.prop(ob, "stp", text="")
+    row.prop(ob.keyframes, "beg", text="")
+    row.prop(ob.keyframes, "end", text="")
+    row.prop(ob.keyframes, "stp", text="")
 
 
 def anim_fac_tmpl(c, ob):
@@ -256,6 +254,14 @@ def anim_fac_tmpl(c, ob):
     col.prop(ob, "fac", text="")
     row = c.row(align=True)
     row.enabled = ob.active
+    row.prop(ob, "delta_change", toggle=True)
+    row = c.row(align=True)
+    row.enabled = ob.active and ob.delta_change
+    row.prop(ob.keyframes, "beg", text="")
+    row.prop(ob.keyframes, "end", text="")
+    row.prop(ob.keyframes, "stp", text="")
+    row = c.row(align=True)
+    row.enabled = ob.active and not ob.delta_change
     col = row.column(align=True)
     col.prop(ob.mirror, "active", toggle=True)
     col = row.column(align=True)
@@ -701,16 +707,37 @@ class PTDBLNPOPA_PT_ui_pathrot(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         col = bcol.column(align=True)
         if ops_on:
             item = collob[collid]
-            col.enabled = item.active
             row = col.row(align=True)
+            row.enabled = item.active
             row.operator("ptdblnpopa.pathrot_edit", text="Edit")
-            c = bcol.column(align=True)
-            c.enabled = item.active
-            c.label(text="animation options")
-            anim_rot_tmpl(c, item)
         else:
             col.enabled = False
             col.label(text="no edits")
+
+
+class PTDBLNPOPA_PT_ui_pathrot_anim(PTDBLNPOPA_PT_ui, bpy.types.Panel):
+    bl_label = "animation options"
+    bl_parent_id = "PTDBLNPOPA_PT_ui_pathrot"
+
+    def draw(self, context):
+        scene = context.scene
+        pool = scene.ptdblnpopa_pool
+        layout = self.layout
+        layout.enabled = arrayset_ok(scene) and ed_panels_ok(pool)
+        box = layout.box()
+        c = box.column(align=True)
+        if pool.pathrot:
+            item = pool.pathrot[pool.pathrot_idx]
+            c.enabled = item.active
+            anim_rot_tmpl(c, item.ani_rot)
+            row = c.row(align=True)
+            row.prop(item.ani_rot, "lerp", text="factors", toggle=True)
+            col = c.column(align=True)
+            col.enabled = item.active and item.ani_rot.lerp
+            anim_ind_tmpl(col, item.ani_nidx, "node id")
+        else:
+            c.enabled = False
+            c.label(text="none")
 
 
 class PTDBLNPOPA_PT_ui_profloc(PTDBLNPOPA_PT_ui, bpy.types.Panel):
@@ -788,13 +815,35 @@ class PTDBLNPOPA_PT_ui_profrot(PTDBLNPOPA_PT_ui, bpy.types.Panel):
             col.enabled = item.active
             row = col.row(align=True)
             row.operator("ptdblnpopa.profrot_edit", text="Edit")
-            c = bcol.column(align=True)
-            c.enabled = item.active
-            c.label(text="animation options")
-            anim_rot_tmpl(c, item)
         else:
             col.enabled = False
             col.label(text="no edits")
+
+
+class PTDBLNPOPA_PT_ui_profrot_anim(PTDBLNPOPA_PT_ui, bpy.types.Panel):
+    bl_label = "animation options"
+    bl_parent_id = "PTDBLNPOPA_PT_ui_profrot"
+
+    def draw(self, context):
+        scene = context.scene
+        pool = scene.ptdblnpopa_pool
+        layout = self.layout
+        layout.enabled = arrayset_ok(scene) and ed_panels_ok(pool)
+        box = layout.box()
+        c = box.column(align=True)
+        if pool.profrot:
+            item = pool.profrot[pool.profrot_idx]
+            c.enabled = item.active
+            anim_rot_tmpl(c, item.ani_rot)
+            row = c.row(align=True)
+            row.prop(item.ani_rot, "lerp", text="factors", toggle=True)
+            col = c.column(align=True)
+            col.enabled = item.active and item.ani_rot.lerp
+            anim_ind_tmpl(col, item.ani_nidx, "node id")
+            anim_ind_tmpl(col, item.ani_idx, "point id")
+        else:
+            c.enabled = False
+            c.label(text="none")
 
 
 class PTDBLNPOPA_PT_ui_noiz(PTDBLNPOPA_PT_ui, bpy.types.Panel):
@@ -827,6 +876,9 @@ class PTDBLNPOPA_PT_ui_noiz(PTDBLNPOPA_PT_ui, bpy.types.Panel):
         col = row.column(align=True)
         col.enabled = noiz.ani_noiz
         col.prop(noiz, "ani_seed", toggle=True)
+        row = c.row(align=True)
+        row.enabled = noiz.ani_noiz
+        row.prop(noiz, "ani_fac", text="")
         row = c.row(align=True)
         row.enabled = noiz.ani_noiz
         row.prop(noiz, "ani_blin", text="")
@@ -902,13 +954,36 @@ class PTDBLNPOPA_PT_ui_obrot(PTDBLNPOPA_PT_ui, bpy.types.Panel):
             col.enabled = item.active
             row = col.row(align=True)
             row.operator("ptdblnpopa.obrot_edit", text="Edit")
-            c = bcol.column(align=True)
-            c.enabled = item.active
-            c.label(text="animation options")
-            anim_rot_tmpl(c, item)
         else:
             col.enabled = False
             col.label(text="no edits")
+
+
+class PTDBLNPOPA_PT_ui_obrot_anim(PTDBLNPOPA_PT_ui, bpy.types.Panel):
+    bl_label = "animation options"
+    bl_parent_id = "PTDBLNPOPA_PT_ui_obrot"
+
+    def draw(self, context):
+        scene = context.scene
+        pool = scene.ptdblnpopa_pool
+        layout = self.layout
+        layout.enabled = arrayset_ok(scene) and ed_panels_ok(pool)
+        box = layout.box()
+        c = box.column(align=True)
+        if pool.obrot:
+            item = pool.obrot[pool.obrot_idx]
+            c.enabled = item.active
+            anim_rot_tmpl(c, item.ani_rot)
+            row = c.row(align=True)
+            row.prop(item.ani_rot, "lerp", text="factors", toggle=True)
+            col = c.column(align=True)
+            col.enabled = item.active and item.ani_rot.lerp
+            anim_ind_tmpl(col, item.ani_nidx, "node id")
+            if pool.use_profile:
+                anim_ind_tmpl(col, item.ani_idx, "point id")
+        else:
+            c.enabled = False
+            c.label(text="none")
 
 
 class PTDBLNPOPA_PT_ui_obsca(PTDBLNPOPA_PT_ui, bpy.types.Panel):
@@ -1252,14 +1327,17 @@ classes = (
     PTDBLNPOPA_PT_ui_pathloc,
     PTDBLNPOPA_PT_ui_pathloc_anim,
     PTDBLNPOPA_PT_ui_pathrot,
+    PTDBLNPOPA_PT_ui_pathrot_anim,
     PTDBLNPOPA_PT_ui_prof,
     PTDBLNPOPA_PT_ui_prof_anim,
     PTDBLNPOPA_PT_ui_profloc,
     PTDBLNPOPA_PT_ui_profloc_anim,
     PTDBLNPOPA_PT_ui_profrot,
+    PTDBLNPOPA_PT_ui_profrot_anim,
     PTDBLNPOPA_PT_ui_obloc,
     PTDBLNPOPA_PT_ui_obloc_anim,
     PTDBLNPOPA_PT_ui_obrot,
+    PTDBLNPOPA_PT_ui_obrot_anim,
     PTDBLNPOPA_PT_ui_obsca,
     PTDBLNPOPA_PT_ui_obsca_anim,
     PTDBLNPOPA_PT_ui_noiz,

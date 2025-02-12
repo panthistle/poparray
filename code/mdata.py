@@ -162,7 +162,6 @@ class PopEx:
         self._pathed_rpivs = []
         self._pathed_raxes = []
         self._pathed_ropts = []
-        self._pathed_rfacs = []
 
     def _set_profile(self, dct):
         if dct:
@@ -178,7 +177,6 @@ class PopEx:
             self._profed_rpivs = []
             self._profed_raxes = []
             self._profed_ropts = []
-            self._profed_rfacs = []
         else:
             #  [1d array]
             self._profile = None
@@ -197,7 +195,6 @@ class PopEx:
         self._objed_lopts = []
         self._objedrots = []
         self._objed_raxes = []
-        self._objed_rfacs = []
         if self._profile:
             self._profori = dct["profori"]
             self._prof_track = dct["profori_track"]
@@ -208,18 +205,21 @@ class PopEx:
 
     # MODIFY
 
+    def _pathedrot_get(self, nprams):
+        nids, nfvs = params_get(self._rings, nprams)
+        lst = [0] * self._rings
+        for i, f in zip(nids, nfvs):
+            lst[i] = f
+        return lst
+
     def path_edrotations(self, dct):
         axis = dct["axis"]
         self._pathed_raxes.append(axis)
         self._pathed_rpivs.append(Vector(dct["pivot"]))
         self._pathed_ropts.append([dct["bbatt"], dct["brots"]])
-        nids, nfvs = params_get(self._rings, dct["nprams"])
-        lst = [0] * self._rings
-        for i, f in zip(nids, nfvs):
-            lst[i] = f
-        self._pathed_rfacs.append(lst)
+        fls = self._pathedrot_get(dct["nprams"])
         angle = dct["angle"]
-        self._pathedrots.append([Quaternion(axis, angle * f) for f in lst])
+        self._pathedrots.append([Quaternion(axis, angle * f) for f in fls])
 
     def _pathedloc_get(self, locs, dct):
         nids, nfvs = params_get(self._rings, dct["nprams"])
@@ -244,13 +244,9 @@ class PopEx:
             return
         self._pathedlocs.append(self._pathedloc_get(locs, dct))
 
-    def prof_edrotations(self, dct):
-        axis = dct["axis"]
-        self._profed_raxes.append(axis)
-        self._profed_rpivs.append(Vector(dct["pivot"]))
-        self._profed_ropts.append([dct["bbatt"], dct["brots"]])
-        nids, nfvs, shuff = shuffparams_get(self._rings, dct["nprams"])
-        ids, fvs = params_get(self._rpts, dct["iprams"])
+    def _profedrot_get(self, nprams, iprams):
+        nids, nfvs, shuff = shuffparams_get(self._rings, nprams)
+        ids, fvs = params_get(self._rpts, iprams)
         lst = [[0] * self._rpts for _ in range(self._rings)]
         for i, f in zip(nids, nfvs):
             if f:
@@ -259,9 +255,16 @@ class PopEx:
                 for j, p in zip(ids, fvs):
                     if p:
                         lst[i][j] = f * p
-        self._profed_rfacs.append(lst)
+        return lst
+
+    def prof_edrotations(self, dct):
+        axis = dct["axis"]
+        self._profed_raxes.append(axis)
+        self._profed_rpivs.append(Vector(dct["pivot"]))
+        self._profed_ropts.append([dct["bbatt"], dct["brots"]])
+        lst = self._profedrot_get(dct["nprams"], dct["iprams"])
         ang = dct["angle"]
-        self._profedrots.append([[Quaternion(axis, ang * i) for i in fl] for fl in lst])
+        self._profedrots.append([[Quaternion(axis, ang * f) for f in fl] for fl in lst])
 
     def _profedloc_get(self, locs, dct):
         ids, fvs = params_get(self._rpts, dct["iprams"])
@@ -296,27 +299,30 @@ class PopEx:
             return
         self._profedlocs.append(self._profedloc_get(locs, dct))
 
-    def obj_edrotations(self, dct):
-        axis = dct["axis"]
-        self._objed_raxes.append(axis)
+    def _objedrot_get(self, dct):
         lst = [0] * self._items
         if self._rpts == 1:
             nids, nfvs = params_get(self._rings, dct["nprams"])
             for i, f in zip(nids, nfvs):
                 if f:
                     lst[i] = f
-        else:
-            nids, nfvs, shuff = shuffparams_get(self._rings, dct["nprams"])
-            ids, fvs = params_get(self._rpts, dct["iprams"])
-            for i, f in zip(nids, nfvs):
-                if f:
-                    loop = i * self._rpts
-                    if shuff:
-                        shuffle(fvs)
-                    for j, p in zip(ids, fvs):
-                        if p:
-                            lst[loop + j] = f * p
-        self._objed_rfacs.append(lst)
+            return lst
+        nids, nfvs, shuff = shuffparams_get(self._rings, dct["nprams"])
+        ids, fvs = params_get(self._rpts, dct["iprams"])
+        for i, f in zip(nids, nfvs):
+            if f:
+                loop = i * self._rpts
+                if shuff:
+                    shuffle(fvs)
+                for j, p in zip(ids, fvs):
+                    if p:
+                        lst[loop + j] = f * p
+        return lst
+
+    def obj_edrotations(self, dct):
+        axis = dct["axis"]
+        self._objed_raxes.append(axis)
+        lst = self._objedrot_get(dct)
         ang = dct["angle"]
         self._objedrots.append([Quaternion(axis, ang * i) for i in lst])
 
@@ -355,7 +361,7 @@ class PopEx:
             nids, nfvs = params_get(self._rings, dct["nprams"])
             for i, f in zip(nids, nfvs):
                 if f:
-                    scas[i] = [f * j for j in axis]
+                    scas[i] = [f * k for k in axis]
             return scas
         nids, nfvs, shuff = shuffparams_get(self._rings, dct["nprams"])
         ids, fvs = params_get(self._rpts, dct["iprams"])
@@ -366,7 +372,7 @@ class PopEx:
                     shuffle(fvs)
                 for j, p in zip(ids, fvs):
                     if p:
-                        scas[loop + j] = [f * p * j for j in axis]
+                        scas[loop + j] = [f * p * k for k in axis]
         return scas
 
     def obj_edscales(self, dct):
@@ -449,29 +455,22 @@ class PopEx:
                         ]
                     else:
                         rots = qls
-        if self._profori:
-            dv = self._prof_trackvec
-            track = self._prof_track
-            up = self._prof_up
-            upfix = self._prof_upfixed
-            for i, (vls, qls) in enumerate(zip(locs, self._profrots)):
-                self._profrots[i] = self._rots_update(
-                    vls, self._profile, dv, track, up, upfix, qls, shqu
-                )
-            if rots:
-                rots = [
-                    [q @ a for q, a in zip(ql, al)]
-                    for ql, al in zip(rots, self._profrots)
-                ]
-            else:
-                rots = self._profrots
-            if befo_r:
-                rots = [[q @ b for q, b in zip(ql, bl)] for ql, bl in zip(rots, befo_r)]
-        elif befo_r:
-            if rots:
-                rots = [[q @ b for q, b in zip(ql, bl)] for ql, bl in zip(rots, befo_r)]
-            else:
-                rots = befo_r
+        dv = self._prof_trackvec
+        track = self._prof_track
+        up = self._prof_up
+        upfix = self._prof_upfixed
+        for i, (vls, qls) in enumerate(zip(locs, self._profrots)):
+            self._profrots[i] = self._rots_update(
+                vls, self._profile, dv, track, up, upfix, qls, shqu
+            )
+        if rots:
+            rots = [
+                [q @ a for q, a in zip(ql, al)] for ql, al in zip(rots, self._profrots)
+            ]
+        else:
+            rots = self._profrots
+        if befo_r:
+            rots = [[q @ b for q, b in zip(ql, bl)] for ql, bl in zip(rots, befo_r)]
         if edlocs:
             locs = [[a + b for a, b in zip(la, lb)] for la, lb in zip(locs, edlocs)]
         for qls, p in afte_p:
@@ -480,8 +479,33 @@ class PopEx:
             ]
         return locs, rots
 
+    def _prof_edrots_locs_noatt(self):
+        locs = [self._proflocs] * self._rings
+        for vls in self._profedlocs:
+            locs = [[a + b for a, b in zip(la, lb)] for la, lb in zip(locs, vls)]
+        rots = []
+        for ols, qls, p in zip(
+            self._profed_ropts, self._profedrots, self._profed_rpivs
+        ):
+            if ols[1] in {"locs", "both"}:
+                locs = [
+                    [q @ (v - p) + p for q, v in zip(rl, vl)]
+                    for rl, vl in zip(qls, locs)
+                ]
+            if ols[1] in {"rots", "both"}:
+                if rots:
+                    rots = [
+                        [q @ a for q, a in zip(ql, al)] for ql, al in zip(qls, rots)
+                    ]
+                else:
+                    rots = qls
+        return locs, rots
+
     def _array2d_data(self, pa_l, pa_r, shqu):
-        locs, rots = self._prof_edrots_locs(shqu)
+        if not self._profori:
+            locs, rots = self._prof_edrots_locs_noatt()
+        else:
+            locs, rots = self._prof_edrots_locs(shqu)
         if pa_r:
             locs = [q @ loc + v for q, v, vls in zip(pa_r, pa_l, locs) for loc in vls]
         else:
@@ -555,29 +579,40 @@ class PopEx:
                         rots = [q @ a for q, a in zip(qls, rots)]
                     else:
                         rots = qls
-        if self._pathori:
-            dv = self._path_trackvec
-            track = self._path_track
-            up = self._path_up
-            upfix = self._path_upfixed
-            self._pathrots = self._rots_update(
-                locs, self._path, dv, track, up, upfix, self._pathrots, shqu
-            )
-            if rots:
-                rots = [q @ a for q, a in zip(rots, self._pathrots)]
-            else:
-                rots = self._pathrots
-            if befo_r:
-                rots = [q @ b for q, b in zip(rots, befo_r)]
-        elif befo_r:
-            if rots:
-                rots = [q @ b for q, b in zip(rots, befo_r)]
-            else:
-                rots = befo_r
+        dv = self._path_trackvec
+        track = self._path_track
+        up = self._path_up
+        upfix = self._path_upfixed
+        self._pathrots = self._rots_update(
+            locs, self._path, dv, track, up, upfix, self._pathrots, shqu
+        )
+        if rots:
+            rots = [q @ a for q, a in zip(rots, self._pathrots)]
+        else:
+            rots = self._pathrots
+        if befo_r:
+            rots = [q @ b for q, b in zip(rots, befo_r)]
         if edlocs:
             locs = [loc + v for loc, v in zip(locs, edlocs)]
         for qls, p in afte_p:
             locs = [q @ (v - p) + p for q, v in zip(qls, locs)]
+        return locs, rots
+
+    def _path_edrots_locs_noatt(self):
+        locs = self._pathlocs
+        for vls in self._pathedlocs:
+            locs = [loc + v for loc, v in zip(locs, vls)]
+        rots = []
+        for ols, qls, p in zip(
+            self._pathed_ropts, self._pathedrots, self._pathed_rpivs
+        ):
+            if ols[1] in {"locs", "both"}:
+                locs = [q @ (v - p) + p for q, v in zip(qls, locs)]
+            if ols[1] in {"rots", "both"}:
+                if rots:
+                    rots = [q @ a for q, a in zip(qls, rots)]
+                else:
+                    rots = qls
         return locs, rots
 
     def _obj_loc_lists(self):
@@ -596,7 +631,10 @@ class PopEx:
         return wlocs, olocs
 
     def get_data(self, shqu=False):
-        locs, rots = self._path_edrots_locs(shqu)
+        if not self._pathori:
+            locs, rots = self._path_edrots_locs_noatt()
+        else:
+            locs, rots = self._path_edrots_locs(shqu)
         if self._profile:
             locs, rots = self._array2d_data(locs, rots, shqu)
         if self._objedrots:
@@ -648,60 +686,97 @@ class PopEx:
         self._profile.anim_update(*args)
         self._proflocs = self._profile.get_locs()
 
-    def pathedrot_anim_angle(self, angle, ufac, idx):
-        rots = self._pathedrots[idx]
-        axis = self._pathed_raxes[idx]
-        if ufac:
-            fls = self._pathed_rfacs[idx]
-            self._pathedrots[idx] = [
-                rot @ Quaternion(axis, f * angle) for rot, f in zip(rots, fls)
-            ]
-        else:
-            q = Quaternion(axis, angle)
-            self._pathedrots[idx] = [rot @ q for rot in rots]
+    def pathedrot_anim_data(self, dct, bang, angle, use_facs, idx):
+        if bang or use_facs:
+            rots = self._pathedrots[idx]
+            axis = self._pathed_raxes[idx]
+            if not use_facs:
+                q = Quaternion(axis, angle)
+                self._pathedrots[idx] = [r @ q for r in rots]
+                return
+            lst = self._pathedrot_get(dct["nprams"])
+            if bang:
+                self._pathedrots[idx] = [
+                    r @ Quaternion(axis, f * angle) for r, f in zip(rots, lst)
+                ]
+                return
+            angle = dct["angle"]
+            self._pathedrots[idx] = [Quaternion(axis, f * angle) for f in lst]
 
     def pathedloc_anim_data(self, dct, idx):
         locs = [Vector() for _ in range(self._rings)]
+        if dct["delta_change"]:
+            if dct["fac"]:
+                l_p = self._pathedlocs[idx]
+                l_d = self._pathedloc_get(locs, dct)
+                self._pathedlocs[idx] = [a + b for a, b in zip(l_p, l_d)]
+            return
         if not dct["fac"]:
             self._pathedlocs[idx] = locs
             return
         self._pathedlocs[idx] = self._pathedloc_get(locs, dct)
 
-    def profedrot_anim_angle(self, angle, ufac, idx):
-        rots = self._profedrots[idx]
-        axis = self._profed_raxes[idx]
-        if ufac:
-            fls = self._profed_rfacs[idx]
+    def profedrot_anim_data(self, dct, bang, angle, use_facs, idx):
+        if bang or use_facs:
+            rots = self._profedrots[idx]
+            axis = self._profed_raxes[idx]
+            if not use_facs:
+                q = Quaternion(axis, angle)
+                self._profedrots[idx] = [[r @ q for r in rls] for rls in rots]
+                return
+            lst = self._profedrot_get(dct["nprams"], dct["iprams"])
+            if bang:
+                self._profedrots[idx] = [
+                    [r @ Quaternion(axis, f * angle) for r, f in zip(rls, fls)]
+                    for rls, fls in zip(rots, lst)
+                ]
+                return
+            angle = dct["angle"]
             self._profedrots[idx] = [
-                [rot @ Quaternion(axis, f * angle) for rot, f in zip(rl, fl)]
-                for rl, fl in zip(rots, fls)
+                [Quaternion(axis, f * angle) for f in fls] for fls in lst
             ]
-        else:
-            q = Quaternion(axis, angle)
-            self._profedrots[idx] = [[rot @ q for rot in rl] for rl in rots]
 
     def profedloc_anim_data(self, dct, idx):
         locs = [[Vector() for _ in range(self._rpts)] for _ in range(self._rings)]
+        if dct["delta_change"]:
+            if dct["fac"]:
+                l_p = self._profedlocs[idx]
+                l_d = self._profedloc_get(locs, dct)
+                self._profedlocs[idx] = [
+                    [a + b for a, b in zip(lp, ld)] for lp, ld in zip(l_p, l_d)
+                ]
+            return
         if not dct["fac"]:
             self._profedlocs[idx] = locs
             return
         self._profedlocs[idx] = self._profedloc_get(locs, dct)
 
-    def objedrot_anim_angle(self, angle, ufac, idx):
-        rots = self._objedrots[idx]
-        axis = self._objed_raxes[idx]
-        if ufac:
-            fls = self._objed_rfacs[idx]
-            self._objedrots[idx] = [
-                rot @ Quaternion(axis, f * angle) for rot, f in zip(rots, fls)
-            ]
-        else:
-            q = Quaternion(axis, angle)
-            self._objedrots[idx] = [rot @ q for rot in rots]
+    def objedrot_anim_data(self, dct, bang, angle, use_facs, idx):
+        if bang or use_facs:
+            rots = self._objedrots[idx]
+            axis = self._objed_raxes[idx]
+            if not use_facs:
+                q = Quaternion(axis, angle)
+                self._objedrots[idx] = [r @ q for r in rots]
+                return
+            lst = self._objedrot_get(dct)
+            if bang:
+                self._objedrots[idx] = [
+                    r @ Quaternion(axis, f * angle) for r, f in zip(rots, lst)
+                ]
+                return
+            angle = dct["angle"]
+            self._objedrots[idx] = [Quaternion(axis, f * angle) for f in lst]
 
     def objedloc_anim_data(self, dct, idx):
         locs = [Vector()] * self._items
         val = sum(1 if i else 0 for i in dct["axis"]) * dct["fac"]
+        if dct["delta_change"]:
+            if val:
+                l_p = self._objedlocs[idx]
+                l_d = self._objedloc_get(locs, dct)
+                self._objedlocs[idx] = [a + b for a, b in zip(l_p, l_d)]
+            return
         if not val:
             self._objedlocs[idx] = locs
             return
@@ -710,6 +785,14 @@ class PopEx:
     def objedsca_anim_data(self, dct, idx):
         scas = [[0, 0, 0]] * self._items
         val = sum(1 if i else 0 for i in dct["axis"]) * dct["fac"]
+        if dct["delta_change"]:
+            if val:
+                l_p = self._objedscas[idx]
+                l_d = self._objedsca_get(scas, dct)
+                self._objedscas[idx] = [
+                    [a + b for a, b in zip(lp, ld)] for lp, ld in zip(l_p, l_d)
+                ]
+            return
         if not val:
             self._objedscas[idx] = scas
             return

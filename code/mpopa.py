@@ -53,10 +53,11 @@ def create_oblist(src, items, coll):
 
 def create_oblist_instances(name, items, coll, ic_obs, rand_inst, rand_seed):
     nobs = len(ic_obs)
+    nidx = nobs - 1
     if rand_inst:
         seed(rand_seed)
         for i in range(items):
-            j = randint(0, nobs - 1)
+            j = randint(0, nidx)
             ob = ic_obs[j].copy()
             ob.name = name
             ob.rotation_mode = "QUATERNION"

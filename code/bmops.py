@@ -398,13 +398,13 @@ class PTDBLNPOPA_OT_pop_noiz(bpy.types.Operator):
     bl_options = {"REGISTER", "INTERNAL", "UNDO"}
 
     ampli: bpy.props.FloatProperty(
-        name="amplitude", description="noise amount", default=0, min=0
+        name="amplitude", description="noise amount", default=0
     )
     nseed: bpy.props.IntProperty(
         name="seed", description="random seed", default=0, min=0
     )
     vfac: bpy.props.FloatVectorProperty(
-        name="axis", description="axis factor", size=3, default=(0, 0, 0), min=0, max=1
+        name="axis", description="axis factor", size=3, default=(0, 0, 0), min=-1, max=1
     )
 
     @classmethod
@@ -1427,7 +1427,7 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
         items = rings * rpts
         loop = pool.ani_kf_loop
 
-        # ----------------- Action evaluation --------------------#
+        # ----------------- Action Evaluation --------------------#
 
         try:
             pop_ani_dat = pool.pop_anim_state_data_eval()
@@ -1449,26 +1449,26 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
                 if use_profile:
                     obsca_d = ModFNOP.aniact_edvals_dict_twodim(pool.obsca, loop)
                 else:
-                    obsca_d = ModFNOP.aniact_edvals_dict_onedim(pool.obsca, loop, True)
+                    obsca_d = ModFNOP.aniact_edvals_dict_onedim(pool.obsca, loop)
             if pop_ani_dat:
-                obrot_d = ModFNOP.aniact_edrots_dict(pool.obrot, loop)
-                if use_profile:
-                    obloc_d = ModFNOP.aniact_edvals_dict_twodim(pool.obloc, loop)
-                else:
-                    obloc_d = ModFNOP.aniact_edvals_dict_onedim(pool.obloc, loop, True)
                 path = pool.path
                 path_flag = path.anim_state()
                 if path_flag:
                     path_d = ModFNOP.aniact_path_edit_dict(path, rings, loop)
-                pathrot_d = ModFNOP.aniact_edrots_dict(pool.pathrot, loop)
-                pathloc_d = ModFNOP.aniact_edvals_dict_onedim(pool.pathloc, loop, False)
+                pathrot_d = ModFNOP.aniact_edrots_dict_onedim(pool.pathrot, loop)
+                pathloc_d = ModFNOP.aniact_edvals_dict_onedim(pool.pathloc, loop)
                 if use_profile:
                     prof = pool.prof
                     prof_flag = prof.anim_state()
                     if prof_flag:
                         prof_d = ModFNOP.aniact_prof_edit_dict(prof, rpts, loop)
-                    profrot_d = ModFNOP.aniact_edrots_dict(pool.profrot, loop)
+                    profrot_d = ModFNOP.aniact_edrots_dict_twodim(pool.profrot, loop)
                     profloc_d = ModFNOP.aniact_edvals_dict_twodim(pool.profloc, loop)
+                    obrot_d = ModFNOP.aniact_edrots_dict_twodim(pool.obrot, loop)
+                    obloc_d = ModFNOP.aniact_edvals_dict_twodim(pool.obloc, loop)
+                else:
+                    obrot_d = ModFNOP.aniact_edrots_dict_onedim(pool.obrot, loop)
+                    obloc_d = ModFNOP.aniact_edvals_dict_onedim(pool.obloc, loop)
                 noiz = pool.noiz
                 if action_location and noiz.active:
                     nsd = None if (noiz.anim_state() and noiz.ani_seed) else noiz.nseed
@@ -1496,10 +1496,16 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
                 if pop_ani_dat:
                     if path_flag:
                         pop.path_anim_update(*(v[i] for v in path_d.values()))
-                    for angs, ufac, lid in zip(
-                        pathrot_d["angs"], pathrot_d["use_facs"], pathrot_d["lids"]
+                    for dct, bang, angs, ufac, nids, lid in zip(
+                        pathrot_d["dcts"],
+                        pathrot_d["b_angs"],
+                        pathrot_d["angs"],
+                        pathrot_d["use_facs"],
+                        pathrot_d["nids"],
+                        pathrot_d["lids"],
                     ):
-                        pop.pathedrot_anim_angle(angs[i], ufac, lid)
+                        dct["nprams"]["idx"] = nids[i]
+                        pop.pathedrot_anim_data(dct, bang, angs[i], ufac, lid)
                     for dct, nids, ams, lid in zip(
                         pathloc_d["dcts"],
                         pathloc_d["nids"],
@@ -1509,28 +1515,21 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
                         dct["nprams"]["idx"] = nids[i]
                         dct["fac"] = ams[i]
                         pop.pathedloc_anim_data(dct, lid)
-                    for angs, ufac, lid in zip(
-                        obrot_d["angs"], obrot_d["use_facs"], obrot_d["lids"]
-                    ):
-                        pop.objedrot_anim_angle(angs[i], ufac, lid)
-                    for dct, ids, nids, ams, lid in zip(
-                        obloc_d["dcts"],
-                        obloc_d["ids"],
-                        obloc_d["nids"],
-                        obloc_d["ams"],
-                        obloc_d["lids"],
-                    ):
-                        dct["iprams"]["idx"] = ids[i]
-                        dct["nprams"]["idx"] = nids[i]
-                        dct["fac"] = ams[i]
-                        pop.objedloc_anim_data(dct, lid)
                     if use_profile:
                         if prof_flag:
                             pop.prof_anim_update(*(v[i] for v in prof_d.values()))
-                        for angs, ufac, lid in zip(
-                            profrot_d["angs"], profrot_d["use_facs"], profrot_d["lids"]
+                        for dct, bang, angs, ufac, ids, nids, lid in zip(
+                            profrot_d["dcts"],
+                            profrot_d["b_angs"],
+                            profrot_d["angs"],
+                            profrot_d["use_facs"],
+                            profrot_d["ids"],
+                            profrot_d["nids"],
+                            profrot_d["lids"],
                         ):
-                            pop.profedrot_anim_angle(angs[i], ufac, lid)
+                            dct["iprams"]["idx"] = ids[i]
+                            dct["nprams"]["idx"] = nids[i]
+                            pop.profedrot_anim_data(dct, bang, angs[i], ufac, lid)
                         for dct, ids, nids, ams, lid in zip(
                             profloc_d["dcts"],
                             profloc_d["ids"],
@@ -1542,6 +1541,49 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
                             dct["nprams"]["idx"] = nids[i]
                             dct["fac"] = ams[i]
                             pop.profedloc_anim_data(dct, lid)
+                        for dct, bang, angs, ufac, ids, nids, lid in zip(
+                            obrot_d["dcts"],
+                            obrot_d["b_angs"],
+                            obrot_d["angs"],
+                            obrot_d["use_facs"],
+                            obrot_d["ids"],
+                            obrot_d["nids"],
+                            obrot_d["lids"],
+                        ):
+                            dct["iprams"]["idx"] = ids[i]
+                            dct["nprams"]["idx"] = nids[i]
+                            pop.objedrot_anim_data(dct, bang, angs[i], ufac, lid)
+                        for dct, ids, nids, ams, lid in zip(
+                            obloc_d["dcts"],
+                            obloc_d["ids"],
+                            obloc_d["nids"],
+                            obloc_d["ams"],
+                            obloc_d["lids"],
+                        ):
+                            dct["iprams"]["idx"] = ids[i]
+                            dct["nprams"]["idx"] = nids[i]
+                            dct["fac"] = ams[i]
+                            pop.objedloc_anim_data(dct, lid)
+                    else:
+                        for dct, bang, angs, ufac, nids, lid in zip(
+                            obrot_d["dcts"],
+                            obrot_d["b_angs"],
+                            obrot_d["angs"],
+                            obrot_d["use_facs"],
+                            obrot_d["nids"],
+                            obrot_d["lids"],
+                        ):
+                            dct["nprams"]["idx"] = nids[i]
+                            pop.objedrot_anim_data(dct, bang, angs[i], ufac, lid)
+                        for dct, nids, ams, lid in zip(
+                            obloc_d["dcts"],
+                            obloc_d["nids"],
+                            obloc_d["ams"],
+                            obloc_d["lids"],
+                        ):
+                            dct["nprams"]["idx"] = nids[i]
+                            dct["fac"] = ams[i]
+                            pop.objedloc_anim_data(dct, lid)
                     locs, rots = pop.get_data(shqu=short_quat)
                     if action_rotation:
                         if sindz_on:
@@ -1558,17 +1600,28 @@ class PTDBLNPOPA_OT_anim_action(bpy.types.Operator):
                         else:
                             kloc.append(locs)
                 if action_scale:
-                    for dct, ids, ams, nids, lid in zip(
-                        obsca_d["dcts"],
-                        obsca_d["ids"],
-                        obsca_d["ams"],
-                        obsca_d["nids"],
-                        obsca_d["lids"],
-                    ):
-                        dct["iprams"]["idx"] = ids[i]
-                        dct["fac"] = ams[i]
-                        dct["nprams"]["idx"] = nids[i]
-                        pop.objedsca_anim_data(dct, lid)
+                    if use_profile:
+                        for dct, ids, ams, nids, lid in zip(
+                            obsca_d["dcts"],
+                            obsca_d["ids"],
+                            obsca_d["ams"],
+                            obsca_d["nids"],
+                            obsca_d["lids"],
+                        ):
+                            dct["iprams"]["idx"] = ids[i]
+                            dct["fac"] = ams[i]
+                            dct["nprams"]["idx"] = nids[i]
+                            pop.objedsca_anim_data(dct, lid)
+                    else:
+                        for dct, ams, nids, lid in zip(
+                            obsca_d["dcts"],
+                            obsca_d["ams"],
+                            obsca_d["nids"],
+                            obsca_d["lids"],
+                        ):
+                            dct["fac"] = ams[i]
+                            dct["nprams"]["idx"] = nids[i]
+                            pop.objedsca_anim_data(dct, lid)
                     scas = pop.get_objscas()
                     if sindz_on:
                         ksca.append([scas[j] for j in range(items) if j in sindz])

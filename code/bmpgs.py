@@ -43,6 +43,18 @@ class PTDBLNPOPA_vec3(bpy.types.PropertyGroup):
     )
 
 
+class PTDBLNPOPA_keyframes(bpy.types.PropertyGroup):
+    beg: bpy.props.IntProperty(
+        name="start", description="start keyframe", default=1, min=1, options={"HIDDEN"}
+    )
+    end: bpy.props.IntProperty(
+        name="end", description="end keyframe", default=1, min=1, options={"HIDDEN"}
+    )
+    stp: bpy.props.IntProperty(
+        name="step", description="keyframe step", default=1, min=1, options={"HIDDEN"}
+    )
+
+
 class PTDBLNPOPA_anim_index(bpy.types.PropertyGroup):
     active: bpy.props.BoolProperty(
         name="index", description="animate index", default=False, options={"HIDDEN"}
@@ -62,17 +74,15 @@ class PTDBLNPOPA_anim_index(bpy.types.PropertyGroup):
         default=0,
         options={"HIDDEN"},
     )
-    beg: bpy.props.IntProperty(
-        name="start", description="start keyframe", default=1, min=1, options={"HIDDEN"}
-    )
-    stp: bpy.props.IntProperty(
-        name="step", description="keyframe step", default=1, min=1, options={"HIDDEN"}
-    )
+    keyframes: bpy.props.PointerProperty(type=PTDBLNPOPA_keyframes)
 
 
 class PTDBLNPOPA_anim_mirror(bpy.types.PropertyGroup):
     active: bpy.props.BoolProperty(
-        name="mirror", description="target mirror", default=False, options={"HIDDEN"}
+        name="mirror",
+        description="cycle between original and target values",
+        default=False,
+        options={"HIDDEN"},
     )
     cycles: bpy.props.IntProperty(
         name="repeat", description="mirror cycles", default=1, min=1, options={"HIDDEN"}
@@ -87,10 +97,17 @@ class PTDBLNPOPA_anim_amount(bpy.types.PropertyGroup):
         name="target", description="factor", default=0, options={"HIDDEN"}
     )
     mirror: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_mirror)
+    delta_change: bpy.props.BoolProperty(
+        name="incremental",
+        description="use target as a delta value: added at every keyframe interval",
+        default=False,
+        options={"HIDDEN"},
+    )
+    keyframes: bpy.props.PointerProperty(type=PTDBLNPOPA_keyframes)
 
 
 class PTDBLNPOPA_anim_rots(bpy.types.PropertyGroup):
-    active: bpy.props.BoolProperty(
+    ani_ang: bpy.props.BoolProperty(
         name="angle",
         description="animate rotation angle",
         default=False,
@@ -106,17 +123,10 @@ class PTDBLNPOPA_anim_rots(bpy.types.PropertyGroup):
         name="angle",
         description="[degrees] to rotate per keyframe",
         default=0,
-        min=-3.14,
-        max=3.14,
         subtype="ANGLE",
         options={"HIDDEN"},
     )
-    beg: bpy.props.IntProperty(
-        name="start", description="from keyframe", default=1, min=1, options={"HIDDEN"}
-    )
-    end: bpy.props.IntProperty(
-        name="end", description="to keyframe", default=1, min=1, options={"HIDDEN"}
-    )
+    keyframes: bpy.props.PointerProperty(type=PTDBLNPOPA_keyframes)
 
 
 class PTDBLNPOPA_batchcoll_toggle(bpy.types.PropertyGroup):
@@ -333,6 +343,12 @@ class PTDBLNPOPA_noiz(bpy.types.PropertyGroup):
         default=False,
         options={"HIDDEN"},
     )
+    ani_fac: bpy.props.FloatProperty(
+        name="factor",
+        description="animation factor",
+        default=0.1,
+        options={"HIDDEN"},
+    )
     ani_seed: bpy.props.BoolProperty(
         name="clock seed",
         description="animated seed",
@@ -396,9 +412,10 @@ class PTDBLNPOPA_pathrot(bpy.types.PropertyGroup):
     pivot: bpy.props.FloatVectorProperty(size=3, default=(0, 0, 0))
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
+    ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
 
-    def anim_state(self):
-        return self.ani_rot.active
+    def anim_state(self, dummy=False):
+        return self.ani_rot.ani_ang or self.ani_nidx.active
 
     def to_dct(self):
         d = {
@@ -425,7 +442,7 @@ class PTDBLNPOPA_profloc(bpy.types.PropertyGroup):
     ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
     ani_fac: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_amount)
 
-    def anim_state(self, dummy=False):
+    def anim_state(self, dummy=True):
         return self.ani_nidx.active or self.ani_idx.active or self.ani_fac.active
 
     def to_dct(self):
@@ -451,9 +468,11 @@ class PTDBLNPOPA_profrot(bpy.types.PropertyGroup):
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
+    ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
+    ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
 
-    def anim_state(self):
-        return self.ani_rot.active
+    def anim_state(self, dummy=True):
+        return self.ani_rot.ani_ang or self.ani_nidx.active or self.ani_idx.active
 
     def to_dct(self):
         d = {
@@ -1365,9 +1384,13 @@ class PTDBLNPOPA_obrot(bpy.types.PropertyGroup):
     nprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     iprams: bpy.props.PointerProperty(type=PTDBLNPOPA_params)
     ani_rot: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_rots)
+    ani_nidx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
+    ani_idx: bpy.props.PointerProperty(type=PTDBLNPOPA_anim_index)
 
-    def anim_state(self):
-        return self.ani_rot.active
+    def anim_state(self, prof_on):
+        if self.ani_nidx.active or self.ani_rot.ani_ang:
+            return True
+        return prof_on and self.ani_idx.active
 
     def to_dct(self):
         d = {"angle": self.angle, "axis": self.axis}
@@ -1869,10 +1892,10 @@ class PTDBLNPOPA_pool(bpy.types.PropertyGroup):
         for item in self.pathloc:
             if item.active and item.anim_state():
                 return True
-        for item in self.obrot:
-            if item.active and item.anim_state():
-                return True
         prof_on = self.use_profile
+        for item in self.obrot:
+            if item.active and item.anim_state(prof_on):
+                return True
         for item in self.obloc:
             if item.active and item.anim_state(prof_on):
                 return True
@@ -2850,6 +2873,7 @@ class PTDBLNPOPA_OT_obsca_edit(bpy.types.Operator):
 
 classes = (
     PTDBLNPOPA_vec3,
+    PTDBLNPOPA_keyframes,
     PTDBLNPOPA_anim_index,
     PTDBLNPOPA_anim_mirror,
     PTDBLNPOPA_anim_amount,
